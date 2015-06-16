@@ -3,12 +3,10 @@
 // Constants
 var CURRENT_BASE_IP = '192.168.255.';
 
-// Drone
+//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// DRONE //////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 var ardrone = require('ar-drone');
-var colors   = require('colors')
-var qtmrt = require('qualisys-rt');
-var API = qtmrt.Api;
-var api = new API({ debug: true });
 
 var lstDrone = [];
 [999,0,1,2,3,4].forEach(function(_id) { 
@@ -51,13 +49,66 @@ var lstDrone = [];
 //      console.log(lstDrone[0].client);
 // }, 3000)
 
+//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// MOCAP //////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+var colors   = require('colors')
+var qtmrt = require('qualisys-rt');
+var API = qtmrt.Api;
+var api = new API({ debug: true });
+
+api.on('frame', function(data) {
+  console.log('Received frame:'.green);
+  console.log(data);
+});
+
+api.on('end', function(data) { console.log('No more data!'.red); }); //api.disconnect();
+api.on('event', function(event) { console.log(event.name.yellow); });
+api.on('disconnect', function(event) { process.exit(); });
+
+api.connect() 
+  .then(function() { return api.qtmVersion(); })
+  .then(function(version) { return api.byteOrder(); })
+  .then(function(byteOrder) { return api.getState(); })
+  .then(function() { return api.discover(); })
+
+  //.then(function() { return api.getParameters('All'); })
+  //.then(function(parameters) {
+    //console.log(parameters.the6d);
+    //console.log(parameters.the3d);
+  //})
+  //.then(function() { return api.streamFrames() })
+  //.then(function() { return api.streamFrames({ components: ['All'], frequency: 1/100 }) })
+  //.then(function() { return api.stopStreaming() })
+  //.then(function() { return api.streamFrames({ components: ['All'], frequency: 1/10 }) })
+  //.then(function() { return api.streamFrames({ components: ['All'], frequency: 'AllFrames' }) })
+  //.then(function() { return api.streamFrames({ components: ['2D'], frequency: '2' }) })
+  //.then(function() { return api.streamFrames({ components: ['Image'], frequency: '2' }) })
+  //.then(function() { return api.streamFrames({ components: ['3D'], frequency: 1/50 }) })
+  //.then(function() { return api.streamFrames({ components: ['3D'] }) })
+  //.then(function() { return api.streamFrames({ components: ['Force', 'Image', 'Analog', 'AnalogSingle', '6D', '3D', '2D'], frequency: 'AllFrames' }) })
+  //.then(function() { return api.streamFrames({ frequency: 100, components: ['3DNoLabels'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['3DRes'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['3DNoLabelsRes'] }); })
+  .then(function() { return api.streamFrames({ frequency: 1/100, components: ['6D'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['6DRes'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['6DEuler'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['6DEulerRes'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['Force'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['ForceSingle'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/100, components: ['Image'] }); })
+  //.then(function() { return api.streamFrames({ frequency: 1/200, components: ['GazeVector'] }); })
+  //.then(function() { return api.disconnect(); })
+
+  .catch(function(err) {
+    console.log(err);
+  })
+;
 
 
-
-
-
-
-// Web visuals
+//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// WEB VISUALS ////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 var express = require('express.io');
 var path = require('path');
 var app = express().http().io()
