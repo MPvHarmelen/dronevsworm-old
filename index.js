@@ -10,8 +10,6 @@ var qtmrt = require('qualisys-rt');
 var API = qtmrt.Api;
 var api = new API({ debug: true });
 
-
-
 var lstDrone = [];
 [999,0,1,2,3,4,5].forEach(function(_id) { 
   lstDrone.push({
@@ -38,14 +36,9 @@ var lstDrone = [];
 });
 
 setInterval(function() {
-  lstDrone.forEach(function(drone) {
-     console.log(drone.client);
-  })
+    console.log('yay ---> ')
+     console.log(lstDrone[0].client);
 }, 3000)
-
-
-
-
 
 
 
@@ -59,8 +52,9 @@ var path = require('path');
 var app = express().http().io()
 
 // view engine setup
+app.engine('html', require('hogan-express'));
+app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hjs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Broadcast all draw clicks.
@@ -69,8 +63,8 @@ app.io.route('drawClick', function(req) {
 })
 
 // Send client html.
-app.get('/', function(req, res) {
-    res.render('index', {});
+app.get('/draw', function(req, res) {
+    res.render('draw', {});
 })
 
 
