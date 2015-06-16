@@ -1,0 +1,38 @@
+{
+  "name": "droneShow",
+  "version": "1.0.0",
+  "authors": [
+    "Tim <Tim@woodl.nl>",
+    "Alex <Alex@woodl.nl>",
+    "Mart <martvanblokland@hotmail.com>"
+  ],
+  "description": "Server side calculations for impressive drone things",
+  "license": "MIT",
+  "homepage": "https://DronesNow.nl",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "font-awesome": "~4.3.0",
+    "jquery": "~2.1.3",
+    "Chart.js": "~1.0.2",
+    "jquery-ui": "~1.11.4",
+    "jQuery.mmenu": "5.0.4",
+    "chart.js": "~0.1.0",
+    "d3": "~3.5.5",
+    "c3": "~0.4.10",
+    "plottable": "~0.54.0",
+    "screenfull": "~2.0.0",
+    "Sortable": "~1.2.0",
+    "socket.io": "~1.3.5"
+  },
+  "resolutions": {
+    "jquery": "~2.1.3",
+    "d3": "~3.5.5"
+  }
+}
