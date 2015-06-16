@@ -11,22 +11,32 @@ var API = qtmrt.Api;
 var api = new API({ debug: true });
 
 var lstDrone = [];
-[999,0,1,2,3,4,5].forEach(function(_id) { 
+[999,0,1,2,3,4].forEach(function(_id) { 
   lstDrone.push({
-    _id: _id,
-    _state: {
+    id: _id,
+    state: {
       inAir: 0,
       camera: 0,
       emergency: 0,
       control: 0,
       autopilot: 1
     },
-    _target: {
-      altitude: 90,
-      direction_empty: { vx: 0, vy: 0, vz: 0, vt: 0 },
-      direction_control: { vx: 0, vy: 0, vz: 0, vt: 0 },
-      direction_height:  { vx: 0, vy: 0, vz: 0, vt: 0 }
+
+    // The location object holds the information received from the camera's for each drone
+    //  - T0 is the last point
+    //  - T1 is the point before that one
+    //  - TX contains a array with all points
+    location: { 
+      t0: { x: 0, y: 0, z: 0, r: 0 },
+      t1: { x: 0, y: 0, z: 0, r: 0 },
+      tX: []
     },
+    // target: {
+    //   altitude: 90,
+    //   direction_empty: { vx: 0, vy: 0, vz: 0, vt: 0 },
+    //   direction_control: { vx: 0, vy: 0, vz: 0, vt: 0 },
+    //   direction_height:  { vx: 0, vy: 0, vz: 0, vt: 0 }
+    // },
     client: ardrone.createClient({
       ip: (_id === 999 ? '192.168.1.1' : CURRENT_BASE_IP + _id),
       frameRate: 1
@@ -35,10 +45,11 @@ var lstDrone = [];
   })
 });
 
-setInterval(function() {
-    console.log('yay ---> ')
-     console.log(lstDrone[0].client);
-}, 3000)
+// Used to view the CLIENT object of the drone
+// setInterval(function() {
+//     console.log('yay ---> ')
+//      console.log(lstDrone[0].client);
+// }, 3000)
 
 
 
@@ -63,6 +74,12 @@ app.io.route('drawClick', function(req) {
 })
 
 // Send client html.
+app.get('/overview', function(req, res) {
+    res.render('overview', {
+      lstDrone: lstDrone
+    });
+})
+
 app.get('/draw', function(req, res) {
     res.render('draw', {});
 })

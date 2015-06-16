@@ -1,0 +1,71 @@
+<html>
+<head>
+    <title>Overview of current drones</title>
+    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/font-awesome/css/font-awesome.min.css">
+    <style>
+
+        div.col-drone { border: 1px solid #eee; }
+
+    </style>
+</head>
+
+<body>
+        <div class="col-xs-12">
+            <h1>Drone overview page</h1>
+        </div>
+        {{#lstDrone}}
+        <div class="col-drone col-xs-4">
+            <h2>
+                <i class="fa fa-plane"></i>
+                <span class="pull-right">WL_Drone_{{id}}</span>  
+            </h2>
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <td><i class='fa fa-server' title='IP Adress of this drone'></i></td>
+                        <td>{{client._options.ip}}</td>
+                    </tr>
+                    <tr>
+                        <td><i class='fa fa-codepen' title='Location of this drone'></i></td>
+                        <td>
+                            <span>X</span>
+                            <span>Y</span>
+                            <span>Z</span>
+                            <span>R</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered text-center">
+                <tbody>
+                    <tr>
+                        <td><i class='fa fa-2x fa-car' title='Auto pilot'></i></td>
+                        <td><i class='fa fa-2x fa-gamepad' title='Controlled by user'></i></td>
+                        <td><i class='fa fa-2x fa-level-up' title=''></i></td>
+                    </tr>
+                    <tr>
+                        <td><i class='fa fa-2x fa-connectdevelop' title=''></i></td>
+                        <td><i class='fa fa-2x fa-connectdevelop' title=''></i></td>
+                        <td><i class='fa fa-2x fa-level-down' title=''></i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {{/lstDrone}}
+        
+    
+</body>
+
+<script src="/libs/jquery/dist/jquery.min.js"></script>
+<script src="/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    App = {}
+    App.socket = io.connect()
+
+    // Basic socket communication
+    // App.socket.on('draw', App.draw) 
+    // App.socket.emit('drawClick', data) // Broadcast draw.
+</script>
+</html>
