@@ -29,7 +29,41 @@ var mocap = require('./models/mocap.js');
 var web = require('./models/views.js');
 
 
+//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// LOOPS ////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
+// SendCommand kan een nieuw commando geven op basis van verschillende modellen. Het verbeteren van deze modellen zal mogelijk een belangrijk onderdeel zijn van het succes van de show.
+// INPUT: X,Y,Z,R + vX, vY, vZ, vR Drone
+// OUTPUT: X, Y, Z, R Drone
+var SendCommand = function() {};
+
+// Doel: Veiligheid gehele systeem checken
+// Per seconde: 1 ~ 10
+// Safety check doet verschillende checks (zoals genoemd in safety measures) indien de situatie als onveilig wordt aangekaart kan besloten worden alle drones te laten laden.
+// INPUT: TUTI
+// OUTPUT: Veiligheid situatie
+var SafetyCheck = function() {}
+
+// UpdateDisplay
+// Doel: Stuurt de huidige stand van zaken naar alle clients die aan het luisteren zijn.
+// Per seconde: 10 ~ 20
+// Door update display blijft iemand die naar de monitor kijkt op de hoogte van wat er gebeurt in de computer. 
+var UpdateDisplay = function() {}
+
+
+// DoFunction handles two important parts of functions. The first
+// is how many times a second a function has to run. 
+//
+// TODO: The second more important fact is that it checks if it has done
+// it before it starts the next.
+var DoFunction = function(timesPerSecond, functionToDo) {
+  setInterval(functionToDo, Math.round(1000 / timesPerSecond));
+} 
+
+DoFunction(10, SendCommand);
+DoFunction( 1, SafetyCheck);
+DoFunction(15, UpdateDisplay);
 
 
 
