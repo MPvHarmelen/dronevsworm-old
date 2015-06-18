@@ -12,7 +12,7 @@ var CONTROL_UP_SPEED = 2000;
 
 var flock = require('./models/flock.js');
 
-flock.init([999,0,1,2,3,4], '192.168.100.');
+flock.init([999,0,1,2,3,4], '192.168.1.20');
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// MOCAP //////////////////////////////////////////
@@ -20,7 +20,7 @@ flock.init([999,0,1,2,3,4], '192.168.100.');
 
 var mocap = require('./models/mocap.js');
 
-//mocap.start('22223', '192.168.1.238');
+mocap.start('22223', '192.168.1.238');
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -59,11 +59,13 @@ var SendCommand = function() {
 
 		var drone = flock.lst[i];
 
-
+		// Get target
+		var droneTarget = target.Get(id);
 
 		// Calculate 
-		// var target = { x, y, z };
-		// var current = mocap.GetCurrent(_id);
+		// var droneCurrent = mocap.GetCurrent(_id);
+
+		drone.go.autopilot = { vx: 0, vy: 0, vz: 0, vr: 0 };
 
 		// Send go command
 		drone.Go();

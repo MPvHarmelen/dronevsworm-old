@@ -42,6 +42,7 @@ module.exports = {
   	var broadcast = {
   		lstDrone: []
   	};
+
   	newData.lstFlock.forEach(function(drone) {
 
   		var info = {
@@ -88,8 +89,16 @@ module.exports = {
   			info.state_1[2].value = (1 === drone.state.stopped ? 'success' : 'danger');
   		}
 
+      newData.lstMocap.forEach(function(droneMOCAP) {
+        console.log(droneMOCAP);
+
+      
+      })
+
   		broadcast.lstDrone.push(info)
   	})
+
+    
 
   	broadcast_last = broadcast;
     app.io.broadcast('Update_Display', broadcast);
