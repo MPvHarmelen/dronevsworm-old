@@ -187,31 +187,38 @@ api.on('end', function(data) { console.log('No more data!'.red); }); //api.disco
 api.on('event', function(event) { console.log(event.name.yellow); });
 api.on('disconnect', function(event) { process.exit(); });
 
-module.exports = {
-  lst: lst,
-  start: function(port, ip) {
-    try {
-      api.connect(port || "22223", ip || "localhost")
-        .then(function() { return api.qtmVersion(); })
-        .then(function(version) { return api.byteOrder(); })
-        .then(function(byteOrder) { return api.getState(); })
-        .then(function() { return api.discover(); })
-        .then(function() { return api.getParameters('All'); })
+var ApiStart = function(port, ip) {
+  try {
+    api.connect(port || "22223", ip || "localhost")
+      .then(function() { return api.qtmVersion(); })
+      .then(function(version) { return api.byteOrder(); })
+      .then(function(byteOrder) { return api.getState(); })
+      .then(function() { return api.discover(); })
+      .then(function() { return api.getParameters('All'); })
 
-        // Create dronelist
-        .then(CreateDroneList)
+      // Create dronelist
+      .then(CreateDroneList)
 
-        // Get all RIGID Bodies
-        .then(function() { return api.streamFrames({ frequency: 1/500, components: ['6D'] }); })
+      // Get all RIGID Bodies
+      .then(function() { return api.streamFrames({ frequency: 1/500, components: ['6D'] }); })
 
-        .catch(function(err) {
-          console.log('QTS Internal error');
-          console.log(err);
-        })
-      ;
-    } catch(err) {
-      console.log('QTS Connection error')
-      console.log(err)
-    }
+      .catch(function(err) {
+        console.log('QTS Internal error');
+        console.log(err);
+      })
+    ;
+  } catch(err) {
+    console.log('QTS Connection error')
+    console.log(err)
   }
 }
+
+module.exports = {
+  lst: lst,
+  start: ApiStart,
+
+  GetCurrentPoint: function(id) {
+    // Get current location of object with this id
+  }
+}
+
