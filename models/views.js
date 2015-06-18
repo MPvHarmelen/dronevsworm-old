@@ -55,10 +55,16 @@ module.exports = {
   				{ name: 'wind', icon: 'flag', title: 'Wind', value: '- m/s' },
           { name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
           { name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
-  				{ name: 'xyzTarget', icon: 'codepen', title: 'Target', value: [
-            Math.round(drone.go.autopilot.vx * 100) / 100, 
-            Math.round(drone.go.autopilot.vy * 100) / 100, 
-            Math.round(drone.go.autopilot.vz * 100) / 100, 
+  				{ name: 'xyzTarget', icon: 'car', title: 'Auto', value: [
+            'x' + Math.round(drone.go.autopilot.vx * 100) / 100, 
+            'y' + Math.round(drone.go.autopilot.vy * 100) / 100, 
+            'z' + Math.round(drone.go.autopilot.vz * 100) / 100, 
+            ]
+          },
+          { name: 'xyzControl', icon: 'gamepad', title: 'Control', value: [
+            'x' + Math.round(drone.go.control.vx * 100) / 100, 
+            'y' + Math.round(drone.go.control.vy * 100) / 100, 
+            'z' + Math.round(drone.go.control.vz * 100) / 100, 
             ]
           },
           { name: 'connect', icon: 'refresh', title: 'Last connect', value: Math.min(new Date().getTime() - drone.navdata.t0.timestamp, 9999) + ' ms' },
@@ -101,10 +107,11 @@ module.exports = {
           var XYZ_est = droneMOCAP.GetLastPoint_NotEstimated();
 
           info.show[4].value = Math.round((XYZ_found.t - XYZ_est.t) / 1000) + ' ms';
-          info.show[5].value = 
-            Math.round(XYZ_est.p.x) + ',' + 
-            Math.round(XYZ_est.p.y) + ',' + 
-            Math.round(XYZ_est.p.z);
+          info.show[5].value = [
+            Math.round(XYZ_est.p.x),
+            Math.round(XYZ_est.p.y),
+            Math.round(XYZ_est.p.z),
+            ];
 
         }
       })

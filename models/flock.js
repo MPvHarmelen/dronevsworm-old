@@ -143,11 +143,11 @@ Drone.prototype.Go = function() {
     if(go.vz > 0) this.client.up(Math.abs(go.vz)); 
     else if(go.vz < 0) this.client.down(Math.abs(go.vz));
 
-    if(go.vx < 0) this.client.left(Math.abs(go.vx)); 
-    else if(go.vx > 0) this.client.right(Math.abs(go.vx));
+    if(go.vy < 0) this.client.left(Math.abs(go.vx)); 
+    else if(go.vy > 0) this.client.right(Math.abs(go.vx));
 
-    if(go.vy < 0) this.client.back(Math.abs(go.vy)); 
-    else if(go.vy > 0) this.client.front(Math.abs(go.vy));
+    if(go.vx < 0) this.client.back(Math.abs(go.vy)); 
+    else if(go.vx > 0) this.client.front(Math.abs(go.vy));
 
     if(go.vr > 0) this.client.clockwise(Math.abs(go.vr));  
     else if(go.vr < 0) this.client.counterClockwise(Math.abs(go.vr));

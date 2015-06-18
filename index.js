@@ -89,7 +89,7 @@ var SendCommand = function() {
 };
 
 var VelocityToPower = function(reqV){
-	var c = [0, (1/250), 0]; 
+	var c = [0, (1/25), 0]; 
 	return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
 }
 
@@ -125,6 +125,6 @@ var DoFunction = function(timesPerSecond, functionToDo) {
 	setInterval(functionToDo, Math.round(1000 / timesPerSecond));
 }
 
-DoFunction(10, SendCommand);
+DoFunction(20, SendCommand);
 DoFunction( 1, SafetyCheck);
-DoFunction(15, UpdateDisplay);
+DoFunction(10, UpdateDisplay);
