@@ -45,7 +45,6 @@ views.app.io.route('Update_DroneControl', function(req) {
 	}
 })
 
-
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// LOOPS //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -68,18 +67,17 @@ var SendCommand = function() {
 			vx : (droneTarget.x - droneCurrent.p.x) / (1000/10), // (1000/10) is hz to ms
 			vy : (droneTarget.y - droneCurrent.p.y) / (1000/10),
 			vz : (droneTarget.z - droneCurrent.p.z) / (1000/10), 
-			vr : 0
+			vYaw : (droneTarget.yaw - droneCurrent.p.yaw) / (1000/10)
 		}
 
 		var reqP = {
 			vx : VelocityToPower(reqV.vx), 
 			vy : VelocityToPower(reqV.vy),
 			vz : VelocityToPower(reqV.vz),
-			vr : 0,
+			vYaw : (droneTarget.yaw - droneCurrent.p.yaw) / 50
 		}
 
 		// console.log(droneTarget.x + ' ' + droneCurrent.p.x); 		
-
 
 		drone.go.autopilot = reqP;
  		
@@ -89,7 +87,7 @@ var SendCommand = function() {
 };
 
 var VelocityToPower = function(reqV){
-	var c = [0, (1/25), 0]; 
+	var c = [0, (1/500), 0]; 
 	return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
 }
 

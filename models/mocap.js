@@ -21,6 +21,7 @@ var Drone = function(_id){
 Drone.prototype.AddPoint = function(lstRigidBodies, time) {
 
   var rigidBody = lstRigidBodies[this._6dIndex];
+
   var newPoint = new Point(); 
   newPoint.t = time;
   newPoint.est = (rigidBody.x === null || rigidBody.y === null || rigidBody.z === null);
@@ -35,25 +36,32 @@ Drone.prototype.AddPoint = function(lstRigidBodies, time) {
       x : lastPoint.p.x + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.x, 
       y : lastPoint.p.y + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.y,
       z : lastPoint.p.z + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.z,
+      yaw:lastPoint.p.yaw
     }
 
-  // Object location is known
+    // Object location is known
   } else {
-    var lastPoint = this.GetLastPoint_NotEstimated();
-    newPoint.p = {
+      var lastPoint = this.GetLastPoint_NotEstimated();
+      var rotationMatrix = rigidBody.rotation; 
+      var r11 = rotationMatrix[0]; 
+      var r13 = rotationMatrix[2]; 
+      var r12 = rotationMatrix[1];
+      var yaw = (r12 > 0 ? 1 : number < 0 ? -1 : 0) * Math.acos( r11 / Math.cos( Math.asin(r13) ) ); 
+
+      newPoint.p = {
       x: rigidBody.x, 
       y: rigidBody.y, 
-      z: rigidBody.z
-    };
-    newPoint.v = { 
-      x : (newPoint.p.x - lastPoint.p.x)/(newPoint.t-lastPoint.t), 
-      y : (newPoint.p.y - lastPoint.p.y)/(newPoint.t-lastPoint.t), 
-      z : (newPoint.p.z - lastPoint.p.z)/(newPoint.t-lastPoint.t)
-    }; 
+      z: rigidBody.z, 
+      yaw: yaw
+      };
+      newPoint.v = { 
+        x : (newPoint.p.x - lastPoint.p.x)/(newPoint.t-lastPoint.t), 
+        y : (newPoint.p.y - lastPoint.p.y)/(newPoint.t-lastPoint.t), 
+        z : (newPoint.p.z - lastPoint.p.z)/(newPoint.t-lastPoint.t)
+      }; 
   }
   this.points.push(newPoint);
 }
-
 
 Drone.prototype.GetLastPoint_NotEstimated = function() {
 
@@ -74,8 +82,8 @@ Drone.prototype.GetLastPoint = function() {
 }
 
 var Point  = function(){ 
-  this.p = { x : 0, y : 0, z : 0}; 
-  this.v = { vx : 0, vy : 0, vz : 0}; 
+  this.p = { x : 0, y : 0, z : 0, yaw: 0 }; 
+  this.v = { vx : 0, vy : 0, vz : 0, vYaw: 0 }; 
   this.t = 0; 
   this.est = false; 
 }

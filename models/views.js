@@ -7,7 +7,6 @@ var path = require('path');
 var app = express().http().io()
 var _   = require('underscore');
 
-
 // view engine setup
 app.engine('html', require('hogan-express'));
 app.set('view engine', 'html');
@@ -55,16 +54,18 @@ module.exports = {
   				{ name: 'wind', icon: 'flag', title: 'Wind', value: '- m/s' },
           { name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
           { name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
-  				{ name: 'xyzTarget', icon: 'car', title: 'Auto', value: [
-            'x' + Math.round(drone.go.autopilot.vx * 100) / 100, 
-            'y' + Math.round(drone.go.autopilot.vy * 100) / 100, 
-            'z' + Math.round(drone.go.autopilot.vz * 100) / 100, 
+  				{ name: 'xyzTarget', icon: 'car', title: 'X,Y,Z Speed', value: [
+              Math.round(drone.go.autopilot.vx * 100) / 100, 
+              Math.round(drone.go.autopilot.vy * 100) / 100, 
+              Math.round(drone.go.autopilot.vz * 100) / 100, 
+              Math.round(drone.go.autopilot.vYaw * 100) / 100, 
             ]
           },
-          { name: 'xyzControl', icon: 'gamepad', title: 'Control', value: [
-            'x' + Math.round(drone.go.control.vx * 100) / 100, 
-            'y' + Math.round(drone.go.control.vy * 100) / 100, 
-            'z' + Math.round(drone.go.control.vz * 100) / 100, 
+          { name: 'xyzControl', icon: 'gamepad', title: 'X,Y,Z Speed', value: [
+              Math.round(drone.go.control.vx * 100) / 100, 
+              Math.round(drone.go.control.vy * 100) / 100, 
+              Math.round(drone.go.control.vz * 100) / 100, 
+              Math.round(drone.go.autopilot.vYaw * 100) / 100,
             ]
           },
           { name: 'connect', icon: 'refresh', title: 'Last connect', value: Math.min(new Date().getTime() - drone.navdata.t0.timestamp, 9999) + ' ms' },

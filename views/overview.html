@@ -138,8 +138,8 @@
         else if(keyEvent.which == '87' /* fwd */) App.control.vx = mult * 1;
         else if(keyEvent.which == '83' /* bwd */) App.control.vx = mult * -1;
 
-        else if(keyEvent.which == '81' /* tlf */) App.control.vr = mult * -1;
-        else if(keyEvent.which == '69' /* trg */) App.control.vr = mult * 1;
+        else if(keyEvent.which == '81' /* tlf */) App.control.vYaw = mult * -1;
+        else if(keyEvent.which == '69' /* trg */) App.control.vYaw = mult * 1;
         else return;
 
         keyEvent.preventDefault();
