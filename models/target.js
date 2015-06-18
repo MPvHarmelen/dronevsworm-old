@@ -8,6 +8,6 @@
 module.exports = {
   
   Get: function(id) {
-    return { x: 0, y:0, z:100, r: 0 };
+    return { x: -300, y:-800, z:1750, r: 0 };
   },
 };

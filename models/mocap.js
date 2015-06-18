@@ -90,7 +90,7 @@ var CreateDroneList = function (parameters){
     newDrone._6dIndex = index; 
     lst.push(newDrone); 
   }); 
-  console.log(lst)
+  // console.log(lst)
 }
 
 api.on('frame', function(data) {
@@ -101,7 +101,6 @@ api.on('frame', function(data) {
 
   // Foreach drone calculate/estimate location and speed
   for(var i = 0; i < lst.length; i++) lst[i].AddPoint(lstRigidBodies, time)
-  console.log(lst); 
 });
 
 api.on('error', function() { console.log('Connection error!'.red) }); //api.disconnect();
@@ -112,17 +111,17 @@ api.on('disconnect', function(event) { process.exit(); });
 var ApiStart = function(port, ip) {
   try {
     api.connect(port || "22223", ip || "localhost")
-      .then(function() { return api.qtmVersion(); })
-      .then(function(version) { return api.byteOrder(); })
-      .then(function(byteOrder) { return api.getState(); })
-      .then(function() { return api.discover(); })
+      // .then(function() { return api.qtmVersion(); })
+      // .then(function(version) { return api.byteOrder(); })
+      // .then(function(byteOrder) { return api.getState(); })
+      // .then(function() { return api.discover(); })
       .then(function() { return api.getParameters('All'); })
 
       // Create dronelist
       .then(CreateDroneList)
 
       // Get all RIGID Bodies
-      .then(function() { return api.streamFrames({ frequency: 1/500, components: ['6D'] }); })
+      .then(function() { return api.streamFrames({ frequency: 1/2, components: ['6D'] }); })
 
       .catch(function(err) {
         console.log('QTS Internal error');
@@ -139,16 +138,15 @@ module.exports = {
   lst: lst,
   start: ApiStart,
 
+  GetLastPointById: function(id) {
+
+    for(var i = lst.length; i--; ) if(lst[i].id == id) {
+      return [lst[i].GetLastPoint()];
+    }
+    return [new Point()];
+  },
+
   GetLastPointsById: function(id, count) {
-    if(count === undefined) count = 1;
-    // Get current location of object with this id
+    // TODO Implement multiple points
   }
-
-  GetLastPoint: function(id, count) {
-
-    // By default returns a list only returns 1 point
-    if(count === undefined) count = 1;
-
-   // Get current location of object with this id
-  }, 
 }

@@ -59,18 +59,40 @@ var SendCommand = function() {
 
 		var drone = flock.lst[i];
 
-		// Get target
-		var droneTarget = target.Get(id);
+		// console.log('drone' + drone.id)
+		// console.log(mocap.GetLastPointById(drone.id))
+	    var droneTarget = target.Get(drone.id);
+ 		var droneCurrent = mocap.GetLastPointById(drone.id)[0]; 
 
-		// Calculate 
-		// var droneCurrent = mocap.GetCurrent(_id);
+		var reqV = { 
+			vx : (droneTarget.x - droneCurrent.p.x) / (1000/10), // (1000/10) is hz to ms
+			vy : (droneTarget.y - droneCurrent.p.y) / (1000/10),
+			vz : (droneTarget.z - droneCurrent.p.z) / (1000/10), 
+			vr : 0
+		}
 
-		drone.go.autopilot = { vx: 0, vy: 0, vz: 0, vr: 0 };
+		var reqP = {
+			vx : VelocityToPower(reqV.vx), 
+			vy : VelocityToPower(reqV.vy),
+			vz : VelocityToPower(reqV.vz),
+			vr : 0,
+		}
 
-		// Send go command
-		drone.Go();
+		// console.log(droneTarget.x + ' ' + droneCurrent.p.x); 		
+
+
+		drone.go.autopilot = reqP;
+ 		
+ 		// Send go command
+ 		drone.Go();
 	}
 };
+
+var VelocityToPower = function(reqV){
+	var c = [0, (1/250), 0]; 
+	return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
+}
+
 
 // Doel: Veiligheid gehele systeem checken
 // Per seconde: 1 ~ 10
@@ -87,10 +109,10 @@ var SafetyCheck = function() {
 // Door update display blijft iemand die naar de monitor kijkt op de hoogte van wat er gebeurt in de computer. 
 var UpdateDisplay = function() {
 
-  views.UpdateDisplay({
-    lstFlock: flock.lst,
-    lstMocap: mocap.lst
-  });
+	views.UpdateDisplay({
+		lstFlock: flock.lst,
+		lstMocap: mocap.lst
+	});
 }
 
 
@@ -100,7 +122,7 @@ var UpdateDisplay = function() {
 // TODO: The second more important fact is that it checks if it has done
 // it before it starts the next.
 var DoFunction = function(timesPerSecond, functionToDo) {
-  setInterval(functionToDo, Math.round(1000 / timesPerSecond));
+	setInterval(functionToDo, Math.round(1000 / timesPerSecond));
 }
 
 DoFunction(10, SendCommand);

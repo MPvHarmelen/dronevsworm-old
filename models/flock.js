@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// DRONE //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 var ardrone = require('ar-drone');
@@ -128,17 +128,17 @@ Drone.prototype.Autopilot = function() {
   this.state.control = 0;
 }
 
-Drone.prototype.Go = function(setSpeed) {
+Drone.prototype.Go = function() {
 
   var go = { vx: 0, vy: 0, vz: 0, vr: 0 } ;
 
   // If drone is in air
-  if(this.state.inAir !== 0) {
-
+  if(this.state.inAir !== 0 || true) {
     // If drone is in manual mode
     if (this.state.stopped === 1) {}
     else if(this.state.control === 1) go = this.go.control;
-    else if(setSpeed) go === setSpeed;
+    else if(this.state.autopilot) go = this.go.autopilot;
+    else go = { vx: 0, vy: 0, vz: 0, vr: 0 };
 
     if(go.vz > 0) this.client.up(Math.abs(go.vz)); 
     else if(go.vz < 0) this.client.down(Math.abs(go.vz));
@@ -157,7 +157,9 @@ Drone.prototype.Go = function(setSpeed) {
       Math.abs(go.vy) + 
       Math.abs(go.vz) + 
       Math.abs(go.vr);
-      
+
+    // console.log(go)
+    
     if(totalMovement === 0) this.client.stop();  
     //else console.log('MOVING!');
   }

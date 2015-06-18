@@ -32,7 +32,7 @@
                         <td class='show_{{name}} danger' title='{{title}}'>
                             <i class='fa pull-left fa-fw fa-{{icon}}'></i>
                             <span class='pull-left description'> {{title}}</span>
-                            <span class='pull-right'>{{value}}</span>
+                            <span class='pull-right'></span>
                         </td>
                     </tr>
                     {{/show}}
@@ -76,7 +76,9 @@
 
             var droneCol = $('#DN_drone_' + drone.id);
             drone.show.forEach(function(item) {
-                $(droneCol).find('td.show_' + item.name + ' span.pull-right').html(item.value)
+                var field = $(droneCol).find('td.show_' + item.name + ' span.pull-right');
+                if(typeof item.value === 'array') console.log('array');
+                field.html(item.value)
             })
 
             var setState = function(item) {
@@ -84,7 +86,7 @@
                     .removeClass('success')
                     .removeClass('danger')
                     .addClass(item.value);
-                    console.log(drone.id + 'item name ' + item.name + ' has value ' + item.value)
+                    //console.log(drone.id + 'item name ' + item.name + ' has value ' + item.value)
             }
             drone.state_0.forEach(setState)
             drone.state_1.forEach(setState)

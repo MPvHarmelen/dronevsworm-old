@@ -53,8 +53,14 @@ module.exports = {
   				{ name: 'power', icon: 'bolt', title: 'Battery', value: '- %' },
   				{ name: 'target', icon: 'bullseye', title: 'On target', value: '- %' },
   				{ name: 'wind', icon: 'flag', title: 'Wind', value: '- m/s' },
-  				{ name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
-  				{ name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
+          { name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
+          { name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
+  				{ name: 'xyzTarget', icon: 'codepen', title: 'Target', value: [
+            Math.round(drone.go.autopilot.vx * 100) / 100, 
+            Math.round(drone.go.autopilot.vy * 100) / 100, 
+            Math.round(drone.go.autopilot.vz * 100) / 100, 
+            ]
+          },
           { name: 'connect', icon: 'refresh', title: 'Last connect', value: Math.min(new Date().getTime() - drone.navdata.t0.timestamp, 9999) + ' ms' },
   			],
 
@@ -90,9 +96,17 @@ module.exports = {
   		}
 
       newData.lstMocap.forEach(function(droneMOCAP) {
-        console.log(droneMOCAP);
+        if(droneMOCAP.id == drone.id) {
+          var XYZ_found = droneMOCAP.GetLastPoint();
+          var XYZ_est = droneMOCAP.GetLastPoint_NotEstimated();
 
-      
+          info.show[4].value = Math.round((XYZ_found.t - XYZ_est.t) / 1000) + ' ms';
+          info.show[5].value = 
+            Math.round(XYZ_est.p.x) + ',' + 
+            Math.round(XYZ_est.p.y) + ',' + 
+            Math.round(XYZ_est.p.z);
+
+        }
       })
 
   		broadcast.lstDrone.push(info)
