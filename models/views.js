@@ -65,7 +65,7 @@ module.exports = {
               Math.round(drone.go.control.vx * 100) / 100, 
               Math.round(drone.go.control.vy * 100) / 100, 
               Math.round(drone.go.control.vz * 100) / 100, 
-              Math.round(drone.go.autopilot.vYaw * 100) / 100,
+              Math.round(drone.go.control.vYaw * 100) / 100,
             ]
           },
           { name: 'connect', icon: 'refresh', title: 'Last connect', value: Math.min(new Date().getTime() - drone.navdata.t0.timestamp, 9999) + ' ms' },

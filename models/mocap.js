@@ -1,4 +1,3 @@
-
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// MOCAP //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +45,7 @@ Drone.prototype.AddPoint = function(lstRigidBodies, time) {
       var r11 = rotationMatrix[0]; 
       var r13 = rotationMatrix[2]; 
       var r12 = rotationMatrix[1];
-      var yaw = (r12 > 0 ? 1 : number < 0 ? -1 : 0) * Math.acos( r11 / Math.cos( Math.asin(r13) ) ); 
+      var yaw = (r12 > 0 ? 1 : r12 < 0 ? -1 : 0) * Math.acos( r11 / Math.cos( Math.asin(r13) ) ); 
 
       newPoint.p = {
       x: rigidBody.x, 
@@ -131,14 +130,14 @@ var ApiStart = function(port, ip) {
       // Get all RIGID Bodies
       .then(function() { return api.streamFrames({ frequency: 1/2, components: ['6D'] }); })
 
-      .catch(function(err) {
+      .catch(function(e) {
         console.log('QTS Internal error');
-        console.log(err);
+        console.log(e);
       })
     ;
-  } catch(err) {
+  } catch(e) {
     console.log('QTS Connection error')
-    console.log(err)
+    console.log(e)
   }
 }
 

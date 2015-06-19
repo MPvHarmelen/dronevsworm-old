@@ -20,7 +20,8 @@ flock.init([999,0,1,2,3,4], '192.168.1.20');
 
 var mocap = require('./models/mocap.js');
 
-mocap.start('22223', '192.168.1.238');
+mocap.start('22223', '192.168.1.3');
+// mocap.start('22223', '192.168.253.1');
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ var SendCommand = function() {
 		// console.log(mocap.GetLastPointById(drone.id))
 	    var droneTarget = target.Get(drone.id);
  		var droneCurrent = mocap.GetLastPointById(drone.id)[0]; 
-
+		
 		var reqV = { 
 			vx : (droneTarget.x - droneCurrent.p.x) / (1000/10), // (1000/10) is hz to ms
 			vy : (droneTarget.y - droneCurrent.p.y) / (1000/10),
@@ -74,7 +75,7 @@ var SendCommand = function() {
 			vx : VelocityToPower(reqV.vx), 
 			vy : VelocityToPower(reqV.vy),
 			vz : VelocityToPower(reqV.vz),
-			vYaw : (droneTarget.yaw - droneCurrent.p.yaw) / 50
+			vYaw : (droneTarget.yaw - droneCurrent.p.yaw) / -0.1
 		}
 
 		// console.log(droneTarget.x + ' ' + droneCurrent.p.x); 		
@@ -87,7 +88,7 @@ var SendCommand = function() {
 };
 
 var VelocityToPower = function(reqV){
-	var c = [0, (1/500), 0]; 
+	var c = [0, (1/50), 0]; 
 	return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
 }
 

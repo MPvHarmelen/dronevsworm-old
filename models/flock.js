@@ -130,7 +130,7 @@ Drone.prototype.Autopilot = function() {
 
 Drone.prototype.Go = function() {
 
-  var go = { vx: 0, vy: 0, vz: 0, vYaw: 0 } ;
+  var go = { vx: 0, vy: 0, vz: 0, vYaw: 0 };
 
   // If drone is in air
   if(this.state.inAir !== 0 || true) {
@@ -140,16 +140,16 @@ Drone.prototype.Go = function() {
     else if(this.state.autopilot) go = this.go.autopilot;
     else go = { vx: 0, vy: 0, vz: 0, vYaw: 0 };
 
-    if(go.vz > 0) this.client.up(Math.abs(go.vz)); 
+    if(go.vz >= 0) this.client.up(Math.abs(go.vz)); 
     else if(go.vz < 0) this.client.down(Math.abs(go.vz));
 
-    if(go.vy < 0) this.client.right(Math.abs(go.vy)); 
+    if(go.vy <= 0) this.client.right(Math.abs(go.vy)); 
     else if(go.vy > 0) this.client.left(Math.abs(go.vy));
 
-    if(go.vx < 0) this.client.back(Math.abs(go.vx)); 
+    if(go.vx <= 0) this.client.back(Math.abs(go.vx)); 
     else if(go.vx > 0) this.client.front(Math.abs(go.vx));
 
-    if(go.vYaw > 0) this.client.clockwise(Math.abs(go.vYaw));  
+    if(go.vYaw >= 0) this.client.clockwise(Math.abs(go.vYaw));  
     else if(go.vYaw < 0) this.client.counterClockwise(Math.abs(go.vYaw));
 
     var totalMovement = 
