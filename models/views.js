@@ -7,6 +7,10 @@ var path = require('path');
 var app = express().http().io()
 var _   = require('underscore');
 
+var target = require('./target.js');
+
+var grade = 0; 
+
 // view engine setup
 app.engine('html', require('hogan-express'));
 app.set('view engine', 'html');
@@ -32,6 +36,15 @@ app.get('/overview', function(req, res) {
 
 app.listen(3000)
 
+
+
+var GetTargetPositionDif = function(p, target){ 
+  var difX = Math.abs(Math.pow(p.x,2) - Math.pow(target.x,2));
+  var difY = Math.pow(Math.pow(p.y,2) - Math.pow(target.y,2));
+  var difZ = Math.pow(Math.pow(p.z,2) - Math.pow(target.z,2));
+  return Math.pow(difX + difY + difZ, 0.5); 
+}
+
 module.exports = {
 
   app: app,
@@ -50,7 +63,7 @@ module.exports = {
   			show: [
   				{ name: 'ip', icon: 'server', title: 'IP', value: drone.client._options.ip },
   				{ name: 'power', icon: 'bolt', title: 'Battery', value: '- %' },
-  				{ name: 'target', icon: 'bullseye', title: 'On target', value: '- %' },
+  				{ name: 'target', icon: 'bullseye', title: 'On target', value: '- mm' },
   				{ name: 'wind', icon: 'flag', title: 'Wind', value: '- m/s' },
           { name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
           { name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
@@ -69,6 +82,7 @@ module.exports = {
             ]
           },
           { name: 'connect', icon: 'refresh', title: 'Last connect', value: Math.min(new Date().getTime() - drone.navdata.t0.timestamp, 9999) + ' ms' },
+          { name: 'grade', icon : 'bullseye', title: 'Grade', value: '- mm ms'}
   			],
 
   			state_0: [
@@ -113,6 +127,12 @@ module.exports = {
             Math.round(XYZ_est.p.y),
             Math.round(XYZ_est.p.z),
             ];
+
+
+          info.show[2].value = GetTargetPositionDif(XYZ_est.p, target.Get(drone.id)); 
+          grade += GetTargetPositionDif(XYZ_est.p, target.Get(drone.id)); 
+          info.show[9].value = grade; 
+
 
         }
       })
