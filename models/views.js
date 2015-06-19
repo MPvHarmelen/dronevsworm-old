@@ -74,7 +74,7 @@ module.exports = {
   			state_0: [
   				{ name: 'autopilot', icon: 'car', title: 'Auto pilot', value: '' },
   				{ name: 'takeoff', icon: 'level-up', title: 'Drone fly', value: '' },
-  				{ name: 'safety', icon: 'shield', title: 'Safety protocol active', value: '' }
+  				{ name: 'safeToggle', icon: 'shield', title: 'Drone in a safe state', value: '' }
     		],
     		state_1: [
   				{ name: 'control', icon: 'gamepad', title: 'Manual control', value: '' },
@@ -95,7 +95,7 @@ module.exports = {
 
   			info.state_0[0].value = (1 === drone.state.autopilot ? 'success' : 'danger');
   			info.state_0[1].value = (1 === drone.state.inAir ? 'success' : 'danger');
-  			info.state_0[2].value = (1 === drone.state.safety ? 'success' : 'danger');
+  			info.state_0[2].value = (1 === drone.state.safe ? 'success' : 'danger');
 
   			info.state_1[0].value = (1 === drone.state.control ? 'success' : 'danger');
   			info.state_1[1].value = (1 !== drone.state.inAir ? 'success' : 'danger');

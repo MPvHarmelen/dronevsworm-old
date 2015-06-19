@@ -1,13 +1,15 @@
+'use strict';
+
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// MOCAP //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 var colors   = require('colors');
 var qtmrt = require('qualisys-rt');
-var microS = require('microseconds');
 var API = qtmrt.Api;
 var api = new API({ debug: true });
+var microS = require('microseconds');
 
-var lst = []; 
+var lst = [];
 
 var Drone = function(_id){
   this.id = _id.replace('woodlandDrone', ''); // Number in Woodland_Drone_0
@@ -21,8 +23,7 @@ Drone.prototype.AddPoint = function(lstRigidBodies, time) {
 
   var rigidBody = lstRigidBodies[this._6dIndex];
 
-  var newPoint = new Point(); 
-  newPoint.t = time;
+  var newPoint = new Point(time); 
   newPoint.est = (rigidBody.x === null || rigidBody.y === null || rigidBody.z === null);
 
   // Object location needs estimation
@@ -48,10 +49,10 @@ Drone.prototype.AddPoint = function(lstRigidBodies, time) {
       var yaw = (r12 > 0 ? 1 : r12 < 0 ? -1 : 0) * Math.acos( r11 / Math.cos( Math.asin(r13) ) ); 
 
       newPoint.p = {
-      x: rigidBody.x, 
-      y: rigidBody.y, 
-      z: rigidBody.z, 
-      yaw: yaw
+        x  : rigidBody.x, 
+        y  : rigidBody.y, 
+        z  : rigidBody.z, 
+        yaw: yaw
       };
       newPoint.v = { 
         x : (newPoint.p.x - lastPoint.p.x)/(newPoint.t-lastPoint.t), 
@@ -73,6 +74,22 @@ Drone.prototype.GetLastPoint_NotEstimated = function() {
   return new Point();
 }
 
+Drone.prototype.GetLastPoint = function(count) {
+
+  var pointsArray = [];
+  var pointsLength = this.points.length;
+
+  if(pointsLength > 0) {
+
+    // Add points
+    for(var i = pointsLength; i--; ) {
+      pointsArray.push(this.point[i]);
+      if(pointsArray.length == count) return pointsArray;
+    }
+  } 
+  return pointsArray;  
+};
+
 Drone.prototype.GetLastPoint = function() {
 
   var pointsLength = this.points.length;
@@ -80,10 +97,10 @@ Drone.prototype.GetLastPoint = function() {
   return new Point();
 }
 
-var Point  = function(){ 
+var Point  = function(time){ 
   this.p = { x : 0, y : 0, z : 0, yaw: 0 }; 
   this.v = { vx : 0, vy : 0, vz : 0, vYaw: 0 }; 
-  this.t = 0; 
+  this.t = (time || 0); 
   this.est = false; 
 }
 
@@ -92,7 +109,8 @@ var CreateDroneList = function (parameters){
   var rigidBodies = parameters.the6d.rigidBodies;
   if (!Array.isArray(rigidBodies)){rigidBodies = [rigidBodies]}; 
   rigidBodies.forEach(function(rigidBody, index){ 
-    newDrone = new Drone(rigidBody.name); 
+    var newDrone = new Drone(rigidBody.name); 
+
     newDrone.rgbColor = rigidBody.rgbColor; 
     newDrone._6dIndex = index; 
     lst.push(newDrone); 

@@ -18,7 +18,7 @@ var Drone = function(_id, base_ip) {
     emergency: 0,
     control: 1,
     autopilot: 0,
-    stopped: 0
+    safe: 1
   };
 
   // The location object holds the information received from the camera's for each drone
@@ -120,13 +120,18 @@ Drone.prototype.Land = function() {
 Drone.prototype.Control = function() {
   this.state.autopilot = 0;
   this.state.control = 1;
+  this.state.safe = 1;
 }
-
 
 Drone.prototype.Autopilot = function() {
   this.state.autopilot = 1;
   this.state.control = 0;
+  this.state.safe = 1;
 }
+
+Drone.prototype.IsSafe     = function() { this.state.safe = 1; }
+Drone.prototype.NotSafe    = function() { this.state.safe = 0; }
+Drone.prototype.ToggleSafe = function() { this.state.safe = (this.state.safe ? 0 : 1); }
 
 Drone.prototype.Go = function() {
 
@@ -134,22 +139,31 @@ Drone.prototype.Go = function() {
 
   // If drone is in air
   if(this.state.inAir !== 0 || true) {
-    // If drone is in manual mode
-    if (this.state.stopped === 1) {}
-    else if(this.state.control === 1) go = this.go.control;
-    else if(this.state.autopilot) go = this.go.autopilot;
+
+    if (false) {}
+
+    // If drone is in manual mode always listen
+    else if (this.state.control === 1) go = this.go.control;
+
+    // If drone is in safety mode don't move
+    else if (this.state.safe === 0) go = { vx: 0, vy: 0, vz: 0, vYaw: 0 };
+
+    // If drone is in autopilot mode
+    else if (this.state.autopilot) go = this.go.autopilot;
+
+    // Drone isn't in any mode so don't move
     else go = { vx: 0, vy: 0, vz: 0, vYaw: 0 };
 
-    if(go.vz >= 0) this.client.up(Math.abs(go.vz)); 
-    else if(go.vz < 0) this.client.down(Math.abs(go.vz));
+    if(go.vz >= 0)       this.client.up(Math.abs(go.vz)); 
+    else if(go.vz < 0)   this.client.down(Math.abs(go.vz));
+    
+    if(go.vy <= 0)       this.client.right(Math.abs(go.vy)); 
+    else if(go.vy > 0)   this.client.left(Math.abs(go.vy));
+    
+    if(go.vx <= 0)       this.client.back(Math.abs(go.vx)); 
+    else if(go.vx > 0)   this.client.front(Math.abs(go.vx));
 
-    if(go.vy <= 0) this.client.right(Math.abs(go.vy)); 
-    else if(go.vy > 0) this.client.left(Math.abs(go.vy));
-
-    if(go.vx <= 0) this.client.back(Math.abs(go.vx)); 
-    else if(go.vx > 0) this.client.front(Math.abs(go.vx));
-
-    if(go.vYaw >= 0) this.client.clockwise(Math.abs(go.vYaw));  
+    if(go.vYaw >= 0)     this.client.clockwise(Math.abs(go.vYaw));  
     else if(go.vYaw < 0) this.client.counterClockwise(Math.abs(go.vYaw));
 
     var totalMovement = 
@@ -184,10 +198,15 @@ module.exports = {
     var actionDrone = this.Get(id);
     if(undefined === actionDrone) return;
     else if(undefined === action) return;
-    else if(action === 'takeoff') actionDrone.TakeOff()
-    else if(action === 'land') actionDrone.Land()
-    else if(action === 'autopilot') actionDrone.Autopilot()
-    else if(action === 'control') actionDrone.Control()
+
+    else if(action === 'safeOn')    actionDrone.IsSafe()
+    else if(action === 'safeOff')   actionDrone.NotSafe()
+    else if(action === 'safeToggle')actionDrone.ToggleSafe()
+
+    else if(action === 'takeoff')      actionDrone.TakeOff()
+    else if(action === 'land')         actionDrone.Land()
+    else if(action === 'autopilot')    actionDrone.Autopilot()
+    else if(action === 'control')      actionDrone.Control()
 
     console.log('Drone ' + actionDrone.id + ' (looking for ' + id + ') will perform ' + action + '!');
 

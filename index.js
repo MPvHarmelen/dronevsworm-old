@@ -1,10 +1,12 @@
-'use strict';
+'use strict'
 
 // Constants
 var CURRENT_BASE_IP = '192.168.255.';
 var CONTROL_UP_SPEED = 2000;
 
 // Globals
+var microS = require('microseconds');
+
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// DRONE //////////////////////////////////////////
@@ -57,41 +59,53 @@ var SendCommand = function() {
 
 	for(var i = 0; i < flock.lst.length; i++) {
 
-		var drone = flock.lst[i];
+	var drone = flock.lst[i];
 
-		// console.log('drone' + drone.id)
-		// console.log(mocap.GetLastPointById(drone.id))
-	    var droneTarget = target.Get(drone.id);
- 		var droneCurrent = mocap.GetLastPointById(drone.id)[0]; 
-		
-		var reqV = { 
-			vx : (droneTarget.x - droneCurrent.p.x) / (1000/10), // (1000/10) is hz to ms
-			vy : (droneTarget.y - droneCurrent.p.y) / (1000/10),
-			vz : (droneTarget.z - droneCurrent.p.z) / (1000/10), 
-			vYaw : (droneTarget.yaw - droneCurrent.p.yaw) / (1000/10)
-		}
+	// console.log('drone' + drone.id)
+	// console.log(mocap.GetLastPointById(drone.id))
+	var droneTarget = target.Get(drone.id);
+	var droneCurrent = mocap.GetLastPointById(drone.id)[0]; 
 
-		var reqP = {
-			vx : VelocityToPower(reqV.vx), 
-			vy : VelocityToPower(reqV.vy),
-			vz : VelocityToPower(reqV.vz),
-			vYaw : (droneTarget.yaw - droneCurrent.p.yaw) / -0.1
-		}
+	var deltaP = { 
+		x : (droneTarget.x - droneCurrent.p.x) / (1000/10), // (1000/10) is hz to ms
+		y : (droneTarget.y - droneCurrent.p.y) / (1000/10),
+		z : (droneTarget.z - droneCurrent.p.z) / (1000/10), 
+		yaw : (droneTarget.yaw - droneCurrent.p.yaw) / (1000/10)
+	}
 
-		// console.log(droneTarget.x + ' ' + droneCurrent.p.x); 		
+	var deltaV = { 
+		x : (deltaP.x - droneCurrent.v.x) / (1000/10), // (1000/10) is hz to ms
+		y : (deltaP.y - droneCurrent.v.y) / (1000/10),
+		z : 0, 
+		yaw : 0 
+	}
 
-		drone.go.autopilot = reqP;
- 		
- 		// Send go command
- 		drone.Go();
+
+	var c1 = (1/75); // deltaX
+	var c2 = -1/1.3;   // deltaY
+	var reqP = {
+		vx : c1 * deltaP.x + c2 * deltaV.x,
+		vy : c1 * deltaP.y + c2 * deltaV.y,
+		vz : c1 * deltaP.z,
+		vYaw : -50 * deltaP.yaw
+	}
+
+	drone.go.autopilot = reqP;
+
+	// Send go command
+	drone.Go();
 	}
 };
 
-var VelocityToPower = function(reqV){
-	var c = [0, (1/50), 0]; 
-	return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
-}
+var AccelarationToPower = function(reqA){ 
+ var c = [0, (0.5), 0]; 
+ return c[0] + c[1] * reqA; // + c[2] * Math.pow(reqA,2); 
+} 
 
+var VelocityToPower = function(reqV){
+ var c = [0, (1/50), 0]; 
+ return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
+}
 
 // Doel: Veiligheid gehele systeem checken
 // Per seconde: 1 ~ 10
@@ -100,6 +114,24 @@ var VelocityToPower = function(reqV){
 // OUTPUT: Veiligheid situatie
 var SafetyCheck = function() {
 
+	// Connection lost make drone stop
+	SafetyCheck_CheckConnection();
+
+
+}
+
+var SafetyCheck_CheckConnection = function() {
+
+	// For how long does the system have to wait for safety to kick in
+	var SafetyTime = 500;
+    for(var i = mocap.lst.length; i--; ) {
+		
+    	var lastMeasured = mocap.lst[i].GetLastPoint_NotEstimated();
+    	if((microS.now() - lastMeasured.t) > 1500 * 1000) flock.Action(mocap.lst[i].id, 'safeOff');
+
+    	// We might turn safety off somehow
+    	else {}
+    }
 }
 
 // UpdateDisplay

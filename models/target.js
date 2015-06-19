@@ -17,7 +17,7 @@ module.exports = {
 	var bottom = 1250; //bottom in mm
 	var sin = amp * Math.sin((2*Math.PI * time) / freq) + (amp + bottom); 
 
-	return { x: 250, y: -1500, z: sin, yaw: 0 };
-    // return { x: 250, y:-1500, z:1800, yaw: 0 };
+	// return { x: 250, y: -1500, z: sin, yaw: 0 };
+    return { x: 250, y:-1500, z:1800, yaw: 0 };
   },
 };
