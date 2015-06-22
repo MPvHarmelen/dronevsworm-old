@@ -17,10 +17,10 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Send client html
 var broadcast_last;
 app.get('/overview', function(req, res) {
-
-    // console.log(lstDrone[0].client)
     res.render('overview', broadcast_last);
 })
+
+// app.get('')
 
 // // Broadcast all draw clicks.
 // app.io.route('drawClick', function(req) {

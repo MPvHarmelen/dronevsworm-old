@@ -1,12 +1,11 @@
 'use strict'
 
 // Constants
-var CURRENT_BASE_IP = '192.168.255.';
+var CURRENT_BASE_IP = '192.168.1.20';
 var CONTROL_UP_SPEED = 2000;
 
 // Globals
 var microS = require('microseconds');
-
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// DRONE //////////////////////////////////////////
@@ -14,7 +13,7 @@ var microS = require('microseconds');
 
 var flock = require('./models/flock.js');
 
-flock.init([999,0,1,2,3,4], '192.168.1.20');
+flock.init([0,3], CURRENT_BASE_IP);
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// MOCAP //////////////////////////////////////////
@@ -22,7 +21,7 @@ flock.init([999,0,1,2,3,4], '192.168.1.20');
 
 var mocap = require('./models/mocap.js');
 
-mocap.start('22223', '192.168.1.3');
+// mocap.start('22223', '192.168.1.3');
 // mocap.start('22223', '192.168.253.1');
 
 
@@ -31,6 +30,13 @@ mocap.start('22223', '192.168.1.3');
 //////////////////////////////////////////////////////////////////////////////////
 
 var target = require('./models/target.js');
+
+
+//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// TARGET //////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+var control = require('./models/control.js');
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// VIEWS //////////////////////////////////////////
@@ -57,55 +63,26 @@ views.app.io.route('Update_DroneControl', function(req) {
 // OUTPUT: X, Y, Z, R Drone
 var SendCommand = function() {
 
-	for(var i = 0; i < flock.lst.length; i++) {
+	for(var i = flock.lst.length; i--;) {
 
-	var drone = flock.lst[i];
+		var current_Drone  = flock.lst[i];
 
-	// console.log('drone' + drone.id)
-	// console.log(mocap.GetLastPointById(drone.id))
-	var droneTarget = target.Get(drone.id);
-	var droneCurrent = mocap.GetLastPointById(drone.id)[0]; 
+		// Target contains the target in X,Y,Z,R the drone needs to have
+		var current_Target = target.Get(current_Drone.id);
 
-	var deltaP = { 
-		x : (droneTarget.x - droneCurrent.p.x) / (1000/10), // (1000/10) is hz to ms
-		y : (droneTarget.y - droneCurrent.p.y) / (1000/10),
-		z : (droneTarget.z - droneCurrent.p.z) / (1000/10), 
-		yaw : (droneTarget.yaw - droneCurrent.p.yaw) / (1000/10)
-	}
+		// Current mocap contains the current velocity and location of the drone
+		var current_Mocap  = mocap.GetLastPointById(current_Drone.id)[0]; 
 
-	var deltaV = { 
-		x : (deltaP.x - droneCurrent.v.x) / (1000/10), // (1000/10) is hz to ms
-		y : (deltaP.y - droneCurrent.v.y) / (1000/10),
-		z : 0, 
-		yaw : 0 
-	}
+		// Save the target of the drone
+		current_Drone.go.autopilot = control(
+			current_Target,
+			current_Mocap
+		);
 
-
-	var c1 = (1/75); // deltaX
-	var c2 = -1/1.3;   // deltaY
-	var reqP = {
-		vx : c1 * deltaP.x + c2 * deltaV.x,
-		vy : c1 * deltaP.y + c2 * deltaV.y,
-		vz : c1 * deltaP.z,
-		vYaw : -50 * deltaP.yaw
-	}
-
-	drone.go.autopilot = reqP;
-
-	// Send go command
-	drone.Go();
+		// Send go command
+		current_Drone.Go();
 	}
 };
-
-var AccelarationToPower = function(reqA){ 
- var c = [0, (0.5), 0]; 
- return c[0] + c[1] * reqA; // + c[2] * Math.pow(reqA,2); 
-} 
-
-var VelocityToPower = function(reqV){
- var c = [0, (1/50), 0]; 
- return c[0] + c[1] * reqV; // + c[2] * reqV^2; 
-}
 
 // Doel: Veiligheid gehele systeem checken
 // Per seconde: 1 ~ 10
@@ -116,7 +93,6 @@ var SafetyCheck = function() {
 
 	// Connection lost make drone stop
 	SafetyCheck_CheckConnection();
-
 
 }
 
