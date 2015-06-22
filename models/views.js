@@ -17,12 +17,22 @@ app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '../views'));
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Send client html
+var sent_last;
 
 // Send client html
-var broadcast_last;
+// var control_id;
+// app.get('/control/:id', function(req, res) {
+//   control_id = req.params.id;  
+//   res.render('control', control_last);
+// })
+
 app.get('/overview', function(req, res) {
-    res.render('overview', broadcast_last);
+  res.render('overview', sent_last);
 })
+
+
+
 
 // app.get('')
 
@@ -51,9 +61,23 @@ module.exports = {
 
   UpdateDisplay: function(newData) {
 
-  	var broadcast = {
+    var control = {
+      Algoritm_All: [],
+      Param: [],
+    };
+  	var drones = {
   		lstDrone: []
   	};
+
+    Object.keys(newData.control.Algoritm).forEach(function(alg) {
+      control.Algoritm_All.push({ key: alg, active: (alg == newData.control.Algoritm_Active) })
+    })
+    var activeAlgoritm = newData.control.Algoritm[newData.control.Algoritm_Active];
+    Object.keys(activeAlgoritm.Param).forEach(function(paramKey) {
+      var param = activeAlgoritm.Param[paramKey];
+      param.key = paramKey;
+      control.Param.push(param)
+    })
 
   	newData.lstFlock.forEach(function(drone) {
 
@@ -136,13 +160,14 @@ module.exports = {
 
         }
       })
-
-  		broadcast.lstDrone.push(info)
+      drones.lstDrone.push(info)
   	})
 
-    
-
-  	broadcast_last = broadcast;
-    app.io.broadcast('Update_Display', broadcast);
+  	sent_last = {
+      lstDrone: drones.lstDrone,
+      drones: drones,
+      control: control,
+    };
+    app.io.broadcast('Update_Display', sent_last);
   }
 }

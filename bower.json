@@ -29,7 +29,8 @@
     "plottable": "~0.54.0",
     "screenfull": "~2.0.0",
     "Sortable": "~1.2.0",
-    "socket.io": "~1.3.5"
+    "socket.io": "~1.3.5",
+    "jquery-mobile-bower": "~1.4.5"
   },
   "resolutions": {
     "jquery": "~2.1.3",

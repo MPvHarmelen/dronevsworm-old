@@ -13,7 +13,7 @@ var microS = require('microseconds');
 
 var flock = require('./models/flock.js');
 
-flock.init([0,3], CURRENT_BASE_IP);
+flock.init([0,2], CURRENT_BASE_IP);
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// MOCAP //////////////////////////////////////////
@@ -22,7 +22,7 @@ flock.init([0,3], CURRENT_BASE_IP);
 var mocap = require('./models/mocap.js');
 
 // mocap.start('22223', '192.168.1.3');
-// mocap.start('22223', '192.168.253.1');
+mocap.start('22223', '192.168.1.238');
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -44,14 +44,21 @@ var control = require('./models/control.js');
 
 var views = require('./models/views.js');
 
+// Changes drone state
 views.app.io.route('Update_DroneState', function(req) {
 	flock.Action([req.data.id], req.data.state);
 })
 
+// Changes where the drone goes
 views.app.io.route('Update_DroneControl', function(req) {
 	for(var i = 0; i < flock.lst.length; i ++) {
 		flock.lst[i].go.control = req.data;
 	}
+})
+
+// Changes aspects of the 
+views.app.io.route('Set_DroneControl', function(req) {
+	control.Algoritm[control.Algoritm_Active].Param[req.data.target].val = req.data.value;
 })
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +81,8 @@ var SendCommand = function() {
 		var current_Mocap  = mocap.GetLastPointById(current_Drone.id)[0]; 
 
 		// Save the target of the drone
-		current_Drone.go.autopilot = control(
+		current_Drone.go.autopilot = control.Calc(
+			current_Drone,
 			current_Target,
 			current_Mocap
 		);
@@ -118,7 +126,8 @@ var UpdateDisplay = function() {
 
 	views.UpdateDisplay({
 		lstFlock: flock.lst,
-		lstMocap: mocap.lst
+		lstMocap: mocap.lst,
+		control: control
 	});
 }
 
