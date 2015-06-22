@@ -33,8 +33,8 @@ var Algoritm_Basic = function(param, drone, target, mocap) {
 
 	var detlaA = {};
 
-	var c1 = param.c1.val; // deltaX
-	var c2 = param.c2.val; // deltaY
+	var c1 = param.c1.val / 1000; // deltaX
+	var c2 = param.c2.val / 1000; // deltaY
 
 	return {
 		vx : c1 * deltaP.x + c2 * deltaV.x,

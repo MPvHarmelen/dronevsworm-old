@@ -109,11 +109,14 @@
                 var dronePar = $('input#id' + param.key);
                 dronePar.attr('value', param.val);
             });
-
+            
             data.drones.lstDrone.forEach(function(drone) {
-
+                console.log('Drone ' + drone.id + ' is active');
                 var droneCol = $('#DN_drone_' + drone.id);
                 drone.show.forEach(function(item) {
+                    
+                    if(item.value === null) return;
+
                     var field = $(droneCol).find('td.show_' + item.name + ' span.pull-right');
                     if(typeof item.value === 'object') {
                         field.html('<span>' + item.value.join('</span><span>') + '</span>')
