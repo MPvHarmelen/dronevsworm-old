@@ -39,7 +39,7 @@ var Algoritm_Basic = function(param, drone, target, mocap) {
 	return {
 		vx : c1 * deltaP.x + c2 * deltaV.x,
 		vy : c1 * deltaP.y + c2 * deltaV.y,
-		vz : c1 * deltaP.z,
+		vz : 1/50 * deltaP.z,
 		vYaw : -50 * deltaP.yaw
 	}
 }
@@ -74,7 +74,7 @@ module.exports = {
 			Calc: Algoritm_Basic,	
 			Param: {
 				c1: { lbl: 'C1 Afstand', min: -100, max: 100, val: 0},
-				c2: { lbl: 'C2 Snelheid', min: -100, max: 100, val: 0},
+				c2: { lbl: 'C2 Snelheid', min: -1000, max: 1000, val: 0},
 			}
 		} 
 	},

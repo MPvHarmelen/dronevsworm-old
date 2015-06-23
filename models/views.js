@@ -90,7 +90,8 @@ module.exports = {
   				{ name: 'target', icon: 'bullseye', title: 'On target', value: '- mm' },
   				{ name: 'wind', icon: 'flag', title: 'Wind', value: '- m/s' },
           { name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
-          { name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
+          { name: 'xyzDrone', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
+          { name: 'xyzTo', icon: 'bullseye', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
   				{ name: 'xyzTarget', icon: 'car', title: 'X,Y,Z Speed', value: [
               Math.round(drone.go.autopilot.vx * 100) / 100, 
               Math.round(drone.go.autopilot.vy * 100) / 100, 
@@ -150,12 +151,19 @@ module.exports = {
             Math.round(XYZ_est.p.x),
             Math.round(XYZ_est.p.y),
             Math.round(XYZ_est.p.z),
-            ];
+          ];
+          var thisDroneTarget = target.Get(drone.id);
+          info.show[6].value = [
+            Math.round(thisDroneTarget.x),
+            Math.round(thisDroneTarget.y),
+            Math.round(thisDroneTarget.z),
+          ];
 
 
-          info.show[2].value = GetTargetPositionDif(XYZ_est.p, target.Get(drone.id)); 
+
+          info.show[2].value = GetTargetPositionDif(XYZ_est.p, thisDroneTarget); 
           grade += GetTargetPositionDif(XYZ_est.p, target.Get(drone.id)); 
-          info.show[9].value = grade; 
+          info.show[10].value = grade; 
 
 
         }
