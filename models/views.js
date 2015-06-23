@@ -17,12 +17,22 @@ app.set('view engine', 'html');
 app.set('views', path.join(__dirname, '../views'));
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Send client html
+var sent_last;
 
 // Send client html
-var broadcast_last;
+// var control_id;
+// app.get('/control/:id', function(req, res) {
+//   control_id = req.params.id;  
+//   res.render('control', control_last);
+// })
+
 app.get('/overview', function(req, res) {
-    res.render('overview', broadcast_last);
+  res.render('overview', sent_last);
 })
+
+
+
 
 // app.get('')
 
@@ -51,9 +61,23 @@ module.exports = {
 
   UpdateDisplay: function(newData) {
 
-  	var broadcast = {
+    var control = {
+      Algoritm_All: [],
+      Param: [],
+    };
+  	var drones = {
   		lstDrone: []
   	};
+
+    Object.keys(newData.control.Algoritm).forEach(function(alg) {
+      control.Algoritm_All.push({ key: alg, active: (alg == newData.control.Algoritm_Active) })
+    })
+    var activeAlgoritm = newData.control.Algoritm[newData.control.Algoritm_Active];
+    Object.keys(activeAlgoritm.Param).forEach(function(paramKey) {
+      var param = activeAlgoritm.Param[paramKey];
+      param.key = paramKey;
+      control.Param.push(param)
+    })
 
   	newData.lstFlock.forEach(function(drone) {
 
@@ -66,7 +90,8 @@ module.exports = {
   				{ name: 'target', icon: 'bullseye', title: 'On target', value: '- mm' },
   				{ name: 'wind', icon: 'flag', title: 'Wind', value: '- m/s' },
           { name: 'seen', icon: 'eye', title: 'Last seen', value: '- ms' },
-          { name: 'xyz', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
+          { name: 'xyzDrone', icon: 'codepen', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
+          { name: 'xyzTo', icon: 'bullseye', title: 'X,Y,Z', value: [' - ', ' - ' , ' - '] },
   				{ name: 'xyzTarget', icon: 'car', title: 'X,Y,Z Speed', value: [
               Math.round(drone.go.autopilot.vx * 100) / 100, 
               Math.round(drone.go.autopilot.vy * 100) / 100, 
@@ -126,23 +151,31 @@ module.exports = {
             Math.round(XYZ_est.p.x),
             Math.round(XYZ_est.p.y),
             Math.round(XYZ_est.p.z),
-            ];
+          ];
+          var thisDroneTarget = target.Get(drone.id);
+          info.show[6].value = [
+            Math.round(thisDroneTarget.x),
+            Math.round(thisDroneTarget.y),
+            Math.round(thisDroneTarget.z),
+          ];
 
 
-          info.show[2].value = GetTargetPositionDif(XYZ_est.p, target.Get(drone.id)); 
+
+          info.show[2].value = GetTargetPositionDif(XYZ_est.p, thisDroneTarget); 
           grade += GetTargetPositionDif(XYZ_est.p, target.Get(drone.id)); 
-          info.show[9].value = grade; 
+          info.show[10].value = grade; 
 
 
         }
       })
-
-  		broadcast.lstDrone.push(info)
+      drones.lstDrone.push(info)
   	})
 
-    
-
-  	broadcast_last = broadcast;
-    app.io.broadcast('Update_Display', broadcast);
+  	sent_last = {
+      lstDrone: drones.lstDrone,
+      drones: drones,
+      control: control,
+    };
+    app.io.broadcast('Update_Display', sent_last);
   }
 }
