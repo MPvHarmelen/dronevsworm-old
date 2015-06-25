@@ -5,6 +5,7 @@ var CURRENT_BASE_IP = '192.168.1.21';
 var CONTROL_UP_SPEED = 2000;
 var MULTICAST_INTERFACE = '239.255.42.99';
 var PORT = 1511;
+var SAFETY_TIMEOUT = 5 // time in seconds
 
 // Globals
 var microS = require('microseconds');
@@ -114,7 +115,8 @@ var SafetyCheck_CheckConnection = function() {
     for(var i = mocap.lst.length; i--; ) {
 		
     	var lastMeasured = mocap.lst[i].GetLastPoint_NotEstimated();
-    	if((microS.now() - lastMeasured.t) > 1500 * 1000) flock.Action(mocap.lst[i].id, 'safeOff');
+		var last = mocap.lst[i].GetLastPoint();
+		if((last.t - lastMeasured.t) > SAFETY_TIMEOUT) flock.Action(mocap.lst[i].id, 'safeOff');
 
     	// We might turn safety off somehow
     	else {}
