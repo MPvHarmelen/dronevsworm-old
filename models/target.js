@@ -28,7 +28,7 @@ module.exports = {
 
 	var time = new Date().getTime();
 
-    return { x: 640, y:1800, z:400, yaw: 0 };
+    return { x: 0, y: 0, z:1800, yaw: 0 };
 	return lemniscate(time);
 
 	// basic 
