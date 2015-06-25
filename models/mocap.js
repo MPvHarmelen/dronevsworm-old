@@ -37,6 +37,11 @@ var dgram = require('dgram');
 var optirx = require('optirx');
 
 var TYPE = 'udp4';
+var TRANSLATE_AXES = {
+    x: 'y',
+    y: 'z',
+    z: 'x'
+}
 
 // var API = qtmrt.Api;
 // var api = new API({ debug: true });
@@ -67,14 +72,18 @@ Drone.prototype.AddPoint = function(lstRigidBodies, time) {
   if (newPoint.est) {
 
     // Lastpoint
-    var lastPoint = this.GetLastPoint();
+    var lastPoint = this.GetLastPoint(20);
+    if (!lastPoint) {
+        console.log('Took last');
+        lastPoint = this.GetLastPoint();
+    }
     newPoint.v = lastPoint.v;
     newPoint.p = {
       x : lastPoint.p.x + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.x, 
       y : lastPoint.p.y + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.y,
       z : lastPoint.p.z + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.z,
       // AI-team added yaw speed into consideration
-      yaw:lastPoint.p.yaw + Math.abs(newPoint.t - lastPoint.t)*lastPoint.v.yaw,
+      yaw:lastPoint.p.yaw,
     }
 
     // Object location is known
@@ -89,11 +98,11 @@ Drone.prototype.AddPoint = function(lstRigidBodies, time) {
 
       // position is given in meters, but saved in mm
       newPoint.p = {
-        x  : rigidBody.position[0] * 1000,
-        y  : rigidBody.position[1] * 1000,
-        z  : rigidBody.position[2] * 1000,
         yaw: yaw
       };
+      newPoint.p[TRANSLATE_AXES['x']] = rigidBody.position[0] * 1000;
+      newPoint.p[TRANSLATE_AXES['y']] = rigidBody.position[1] * 1000;
+      newPoint.p[TRANSLATE_AXES['z']] = rigidBody.position[2] * 1000;
       newPoint.v = { 
         x : (newPoint.p.x - lastPoint.p.x)/(newPoint.t-lastPoint.t), 
         y : (newPoint.p.y - lastPoint.p.y)/(newPoint.t-lastPoint.t), 
