@@ -1,8 +1,10 @@
 'use strict'
 
 // Constants
-var CURRENT_BASE_IP = '192.168.1.20';
+var CURRENT_BASE_IP = '192.168.1.21';
 var CONTROL_UP_SPEED = 2000;
+var MULTICAST_INTERFACE = '239.255.42.99';
+var PORT = 1511;
 
 // Globals
 var microS = require('microseconds');
@@ -13,7 +15,7 @@ var microS = require('microseconds');
 
 var flock = require('./models/flock.js');
 
-flock.init([0,2], CURRENT_BASE_IP);
+flock.init([4], CURRENT_BASE_IP);
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// MOCAP //////////////////////////////////////////
@@ -22,7 +24,7 @@ flock.init([0,2], CURRENT_BASE_IP);
 var mocap = require('./models/mocap.js');
 
 // mocap.start('22223', '192.168.1.3');
-mocap.start('22223', '192.168.1.238');
+mocap.start(PORT, MULTICAST_INTERFACE);
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +60,7 @@ views.app.io.route('Update_DroneControl', function(req) {
 
 // Changes aspects of the 
 views.app.io.route('Set_DroneControl', function(req) {
+	console.log(control.Algoritm[control.Algoritm_Active]);
 	control.Algoritm[control.Algoritm_Active].Param[req.data.target].val = req.data.value;
 })
 
@@ -123,7 +126,8 @@ var SafetyCheck_CheckConnection = function() {
 // Per seconde: 10 ~ 20
 // Door update display blijft iemand die naar de monitor kijkt op de hoogte van wat er gebeurt in de computer. 
 var UpdateDisplay = function() {
-
+	// console.log(flock.lst);
+	// console.log(mocap.lst);
 	views.UpdateDisplay({
 		lstFlock: flock.lst,
 		lstMocap: mocap.lst,
