@@ -146,7 +146,7 @@ module.exports = {
           var XYZ_found = droneMOCAP.GetLastPoint();
           var XYZ_est = droneMOCAP.GetLastPoint_NotEstimated();
 
-          info.show[4].value = Math.round((XYZ_found.t - XYZ_est.t) / 1000) + ' ms';
+          info.show[4].value = Math.round((XYZ_found.t - XYZ_est.t) * 1000) + ' ms';
           info.show[5].value = [
             Math.round(XYZ_est.p.x),
             Math.round(XYZ_est.p.y),
