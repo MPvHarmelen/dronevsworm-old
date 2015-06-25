@@ -14,7 +14,9 @@ var GetControlVelocity = function(reqV, currentV, factor){
 }
 
 var GetRequiredVelocity = function(distance, threshhold, max_speed) {
-    if (distance > threshhold)
+    if (threshhold <= 0)
+        threshhold = 1;
+    if (Math.abs(distance) > threshhold)
         return max_speed;
     else
         return max_speed * Math.abs(distance) * distance / Math.pow(threshhold, 2);
@@ -34,6 +36,7 @@ var Algorithm_Squared = function(params, drone, target, mocap){
         var reqV = GetRequiredVelocity(distance, params.threshhold.val * 100, params.max_speed.val / 10);
         result["v" + axis] = GetControlVelocity(reqV, mocap.v[axis], params.speed_factor.val / 10);
     };
+    console.log(result);
     return result;
 }
 
@@ -108,7 +111,7 @@ module.exports = {
             Calc: Algorithm_Squared,
             Param: {
                 threshhold: { lbl: 'Threshold distance', min: 0, max: 50, val: 10},
-                speed_factor: { lbl: 'Speed factor (power of 10)', min: -30, max: 30, val: 0},
+                speed_factor: { lbl: 'Speed factor (power of 10)', min: -30, max: 30, val: -30},
                 max_speed: { lbl: 'Max speed', min: 0, max: 10, val: 6}
             }
         }
