@@ -114,26 +114,26 @@ Drone.prototype.GetLastPoint_NotEstimated = function() {
   return new Point();
 }
 
+// Drone.prototype.GetLastPoint = function(count) {
+
+//   var pointsArray = [];
+//   var pointsLength = this.points.length;
+
+//   if(pointsLength > 0) {
+
+//     // Add points
+//     for(var i = pointsLength; i--) {
+//       pointsArray.push(this.point[i]);
+//       if(pointsArray.length == count) return pointsArray;
+//     }
+//   }
+//   return pointsArray;
+// };
+
 Drone.prototype.GetLastPoint = function(count) {
-
-  var pointsArray = [];
+  count = typeof count !== 'undefined' ? count : 1;
   var pointsLength = this.points.length;
-
-  if(pointsLength > 0) {
-
-    // Add points
-    for(var i = pointsLength; i--; ) {
-      pointsArray.push(this.point[i]);
-      if(pointsArray.length == count) return pointsArray;
-    }
-  } 
-  return pointsArray;  
-};
-
-Drone.prototype.GetLastPoint = function() {
-
-  var pointsLength = this.points.length;
-  if(pointsLength > 0) return this.points[pointsLength - 1];
+  if(pointsLength > 0) return this.points[pointsLength - count];
   return new Point();
 }
 
