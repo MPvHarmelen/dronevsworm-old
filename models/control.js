@@ -108,7 +108,7 @@ module.exports = {
             Calc: Algorithm_Squared,
             Param: {
                 threshhold: { lbl: 'Threshold distance', min: 0, max: 50, val: 10},
-                speed_factor: { lbl: 'Speed factor (power of 10)', min: 0, max: 30, val: 25},
+                speed_factor: { lbl: 'Speed factor (power of 10)', min: -30, max: 30, val: 0},
                 max_speed: { lbl: 'Max speed', min: 0, max: 10, val: 6}
             }
         }
