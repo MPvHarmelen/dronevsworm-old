@@ -2,12 +2,19 @@
 ///////////////////////////////// TARGET //////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // var microS = require('microseconds');
+var HANS_ID = 0;
 
+var mocap = require('./mocap.js');
 var centerOfShow = {
 	x: 250,
 	y: -1500,
 } 
 
+var distanceFromHans = {
+	x: 0,
+	y: 0,
+	z: 1200
+}
 // Implement formular for circle
 
 ///////////// basic lemniscate ///////////////////////
@@ -22,22 +29,25 @@ var lemniscate = function(time) {
 	return {x : xTarget + centerOfShow.x, y : yTarget + centerOfShow.y, z: 2000, yaw : 0};
 }
 
+/// Folow hans
+var followHans = function(hans_id) {
+	var hans = mocap.GetLastPointById(hans_id)[0].p
+	// console.log(hans);
+	res = {
+		x: hans.x + distanceFromHans.x,
+		y: hans.y + distanceFromHans.y,
+		z: hans.z + distanceFromHans.z,
+		yaw: 0,
+	};
+	// console.log(res);
+	return res;
+}
+
 module.exports = {
   
   Get: function(id) {
 
-	var time = new Date().getTime();
-
-    return { x: 0, y: 1000, z:1700, yaw: 0 };
-	return lemniscate(time);
-
-	// basic 
-	var amp = 1000; // amplitude in mm
-	var freq = 5 * 1000; //frequency in ms 
-	var bottom = 1000; //bottom in mm
-	var sin = amp * Math.sin((2*Math.PI * time) / freq) + (amp + bottom); 
-
-	// return { x: (-500 + 500 * id), y: -1500, z: sin, yaw: 0 };
-    // return { x: 250, y:-1500, z:1800, yaw: 0 };
+    // return { x: 0, y: 1000, z:1700, yaw: 0 };
+    return followHans(HANS_ID);
   },
 };
