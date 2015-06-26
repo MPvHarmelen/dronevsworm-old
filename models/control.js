@@ -17,7 +17,7 @@ var GetRequiredVelocity = function(distance, threshhold, max_speed) {
     if (threshhold <= 0)
         threshhold = 1;
     if (Math.abs(distance) > threshhold)
-        return max_speed;
+        return - Math.abs(distance) / distance * max_speed;
     else
         return max_speed * Math.abs(distance) * distance / Math.pow(threshhold, 2);
 }
