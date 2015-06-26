@@ -8,7 +8,7 @@ var PORT = 1511;
 var SAFETY_TIMEOUT = 5 // time in seconds
 
 // Globals
-var microS = require('microseconds');
+// var microS = require('microseconds');
 
 //////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// DRONE //////////////////////////////////////////
@@ -80,7 +80,7 @@ var SendCommand = function() {
 
 		// Target contains the target in X,Y,Z,R the drone needs to have
 		var current_Target = target.Get(current_Drone.id);
-
+		// console.log(current_Target);
 		// Current mocap contains the current velocity and location of the drone
 		var current_Mocap  = mocap.GetLastPointById(current_Drone.id)[0]; 
 
